@@ -40,8 +40,11 @@ fig.add_trace(go.Scatter(
         colorscale="Viridis"
     )
 ))
-# fig.show()
 
-# fig.write_image(filepath + "/fig1.png")
+# fig.write_image(filepath + "/images/fig1.png")
 
-fig.write_image(filepath +"/fig1.webp")
+fig.write_html(filepath + "/test.html")
+
+fig.show()
+
+# fig.write_image(filepath +"/fig1.webp")
