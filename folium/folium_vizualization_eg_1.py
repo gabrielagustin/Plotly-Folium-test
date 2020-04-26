@@ -18,6 +18,8 @@ lon, lat = -60.702951, -31.627062
 
 m = folium.Map(location=[lat, lon], zoom_start=8, tiles=None)
 
+folium.TileLayer('openstreetmap').add_to(m)
+
 folium.raster_layers.TileLayer(
     tiles='http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
     attr='google',
@@ -49,6 +51,7 @@ folium.raster_layers.TileLayer(
 #     control=True,
 # ).add_to(m)
 
+### add mouse position
 folium.LayerControl().add_to(m)
 
 
