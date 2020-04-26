@@ -15,7 +15,7 @@ import folium
 world_map = folium.Map(location=[-31.627062, -60.702951], zoom_start=4)
 
 # display world map
-world_map.save(f'/media/ggarcia/data/Satellogic/Satellogic/Tests/GitHubTest/folium-test/images/folium_world_map.html')
+world_map.save(f'/media/ggarcia/data/Satellogic/Satellogic/Tests/GitHubTest/Plotly-Folium-test/folium/images/folium_world_map.html')
 
 
 # create a Stamen Toner map of the world centered around Canada
@@ -23,6 +23,6 @@ world_map = folium.Map(location=[-31.627062, -60.702951], zoom_start=4, tiles='S
  
 # display world map
 
-world_map.save(f'/media/ggarcia/data/Satellogic/Satellogic/Tests/GitHubTest/folium-test/images/folium_terrain.html')
+world_map.save(f'/media/ggarcia/data/Satellogic/Satellogic/Tests/GitHubTest/Plotly-Folium-test/folium/images/folium_terrain.html')
 
 
