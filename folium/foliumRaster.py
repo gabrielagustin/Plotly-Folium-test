@@ -44,37 +44,32 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
     """ 
     Parameters:
     -----------
-    pathIn : path of the folder where is netCDF files
-    pathOut : path of the folder where .png files will be created
+    path_in: path of the folder where is netCDF files
+    name_in: name of .tif file
+    path_out: path of the folder where .png files will be created
+    name_out: name of HTML file to be created
+    name_product: name of product to plot
     Returns: 
     --------
+    None: create a HTML file
     """  
 
-    
+    ### read raster file
     src = rasterio.open(path_in + name_in)
-    # img = src.read()
     
     slice_ = (slice(0,src.height),slice(0,src.width))
     window_slice = windows.Window.from_slices(*slice_)
     print(window_slice)
 
-
-    # datos_b1 = src.read(1)
-    # plt.imshow(datos_b1)
-    # ax = plt.gca()
-    # ax.add_patch(Rectangle((window_slice.col_off,window_slice.row_off),
-    #                     width=window_slice.width,
-    #                     height=window_slice.height,fill=True,alpha=.2,
-    #                 color="red"))
-    # plt.show()
     bbox = windows.bounds(window_slice,src.transform)
+
     
+    # find specific transform, necessary to show the coordinates appropiately
     transform_window = windows.transform(window_slice,src.transform)
 
     # Read img and convert to rgb
-    img = np.stack([src.read(4-i, window=window_slice) for i in range(1,4)],
+    img = np.stack([src.read(4-i,) for i in range(1,4)],
                 axis=-1)
-    img = np.clip(img,0,2200)/2200
 
     print(img.shape)
     # plt.figure(figsize=(8,8))
@@ -96,64 +91,14 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
 
     bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)
     
-    # plt.figure(figsize=(10,8))
-    # plot.show(out_array,
-    #         transform=transform, cmap='viridis')
+    plt.figure(figsize=(10,8))
+    plot.show(out_array,
+            transform=transform)
 
-
-
-    
-    # print(src.crs)
-    # print(type(img))
-    # print(img.shape)
-
-    # xx= src.bounds
-    # bounds = [[xx[0], xx[1]], [xx[2], xx[3]]]
-    # bounds = [[ymin, xmin], [ymax, xmax]]
-    
-    # out_array = np.ndarray((img.shape[2],height,width),dtype=img.dtype)
-
-    # warp.reproject(img,
-    #             img,src_crs=src.crs,dst_crs={"init":"epsg:4326"})
-
-    # plt.figure(figsize=(10,8))
-    # plot.show(img)
-
-
-    # # Setup colormap
-    # colors = ['#d7191c',  '#fdae61',  '#ffffbf',  '#abdda4',  '#2b83ba']
-    # vmin = np.nanmin(img)
-    # vmax = np.nanmax(img)
-    # print("Min: " + str(vmin))
-    # print("Max: " + str(vmax))
-
-    # levels = 15
-    # cm = branca.colormap.LinearColormap(colors, vmin=vmin, vmax=vmax).to_step(levels)
-    # # Add the colormap to the folium map
-    # cm.caption = "XCH4"
-
-    # # define the world map centered around Canada with a low zoom level
-    
+    ### define the world map centered around center of tif image
     
     mean_lat = (bbox[1] + bbox[3]) / 2.0
     mean_lng = (bbox[0] + bbox[2]) / 2.0
-    
-    # world_map = folium.Map(location=[mean_lat,mean_lng], zoom_start=4)
-
-    
-    # # imageOverlay = folium.raster_layers.ImageOverlay(band, bounds, colormap=cm.viridis, opacity=0.5)
-    # # world_map.add_child(imageOverlay)
-    # # folium.TileLayer('openstreetmap').add_to(world_map)
-    
-    
-    # image_overlay = folium.raster_layers.ImageOverlay(np.transpose(out_array,(1,2,0)),
-    #                                     [[bounds_trans[1],
-    #                                     bounds_trans[0]],
-    #                                     [bounds_trans[3],
-    #                                     bounds_trans[2]]],
-    #                                     name="Satellogic")
-    # world_map.add_child(image_overlay)
-    
     
     map_bb = folium.Map(location=[mean_lat,mean_lng],
             zoom_start=8)
@@ -169,7 +114,6 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
         overlay=False,
         control=True,
     ).add_to(map_bb)
-    
     
     folium.raster_layers.TileLayer(
         tiles='http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
@@ -190,9 +134,9 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
     map_bb.add_child(image_overlay)
     folium.map.LayerControl(position='topright').add_to(map_bb)
     
-    
+    ### add mouse positio
     MousePosition().add_to(map_bb)
-
+    ### create a .html file
     map_bb.save(path_out + name_out)
 
 
@@ -207,20 +151,5 @@ if __name__ == "__main__":
     name_product = 'Sentinel-2'
     
     plot_raster(path_in,name_in, path_out,name_out, name_product)
-
-
-
-
-
-
-
-
-
-# # create a Stamen Toner map of the world centered around Canada
-# world_map = folium.Map(location=[-31.627062, -60.702951], zoom_start=4, tiles='Stamen Terrain')
- 
-# # display world map
-
-# world_map.save(f'/media/ggarcia/data/Satellogic/Satellogic/Tests/GitHubTest/folium-test/images/folium_terrain.html')
 
 
