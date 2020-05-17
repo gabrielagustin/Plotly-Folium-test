@@ -1,4 +1,4 @@
-    # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #!/usr/bin/python
 
 '''
@@ -17,8 +17,7 @@ import rasterio
 import rasterio.plot as plot
 from folium.plugins import MousePosition
 
-from matplotlib.patches import Rectangle
-from rasterio import warp, windows
+from rasterio import warp
 
 
 def  plot_raster(path_in,name_in, path_out,name_out, name_product):
@@ -37,44 +36,29 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
 
     ### read raster file
     src = rasterio.open(path_in + name_in)
+    bbox = src.bounds
     
-    slice_ = (slice(0,src.height),slice(0,src.width))
-    window_slice = windows.Window.from_slices(*slice_)
-    print(window_slice)
-
-    bbox = windows.bounds(window_slice,src.transform)
-
-    
-    # find specific transform, necessary to show the coordinates appropiately
-    transform_window = windows.transform(window_slice,src.transform)
-
     # Read img and convert to rgb
-    img = np.stack([src.read(4-i,) for i in range(1,4)],
-                axis=-1)
-
-    print(img.shape)
-    # plt.figure(figsize=(8,8))
-    # plot.show(img.transpose(2,0,1),
-    #         transform=transform_window, )
-    
+    img = np.stack([src.read(4-i) for i in range(1,4)],
+               axis=-1)
     transform,width,height = warp.calculate_default_transform(src.crs, {"init":"epsg:4326"},
-                                                            img.shape[1],img.shape[0],
-                                                            left=bbox[0],bottom=bbox[1],
-                                                            right=bbox[2],top=bbox[3],
-                                                            resolution=0.0002)
+                                                          img.shape[1],img.shape[0],
+                                                          left=bbox[0],bottom=bbox[1],
+                                                          right=bbox[2],top=bbox[3],
+                                                          resolution=0.002)
 
-    out_array = np.ndarray((img.shape[2],height,width),dtype=img.dtype)
+    out_array = np.ndarray((img.shape[2],img.shape[0],img.shape[1]),dtype=img.dtype)
 
     warp.reproject(np.transpose(img,axes=(2,0,1)),
                 out_array,src_crs=src.crs,dst_crs={"init":"epsg:4326"},
-                src_transform=transform_window,
+                src_transform=transform,
                 dst_transform=transform,resampling=warp.Resampling.bilinear)
-
-    bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)
+        
+    bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)     
     
-    plt.figure(figsize=(10,8))
-    plot.show(out_array,
-            transform=transform)
+    # plt.figure(figsize=(10,8))
+    # plot.show(out_array,
+    #         transform=transform)
 
     ### define the world map centered around center of tif image
     
@@ -132,4 +116,3 @@ if __name__ == "__main__":
     name_product = 'Sentinel-2'
     
     plot_raster(path_in,name_in, path_out,name_out, name_product)
-
