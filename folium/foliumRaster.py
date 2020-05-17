@@ -38,9 +38,11 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
     src = rasterio.open(path_in + name_in)
     bbox = src.bounds
     
-    # Read img and convert to rgb
+    ### read img and convert to rgb
     img = np.stack([src.read(4-i) for i in range(1,4)],
                axis=-1)
+    
+    ### reproject raster to different CRS
     transform,width,height = warp.calculate_default_transform(src.crs, {"init":"epsg:4326"},
                                                           img.shape[1],img.shape[0],
                                                           left=bbox[0],bottom=bbox[1],
@@ -116,3 +118,4 @@ if __name__ == "__main__":
     name_product = 'Sentinel-2'
     
     plot_raster(path_in,name_in, path_out,name_out, name_product)
+
