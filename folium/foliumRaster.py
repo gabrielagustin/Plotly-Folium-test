@@ -9,35 +9,16 @@ Author: Gabriel Agustín Garcia
 Copyright (c) 2020 Your Company
 '''
 
+
 import folium
-import folium.plugins
-from folium.plugins import MousePosition
-from folium.plugins import HeatMap
-
-
-import glob
-import os
-
-import numpy as np
-import numpy.ma as ma
-import pandas as pd
-
-import functions
-
 import matplotlib.pyplot as plt
-from matplotlib import cm
-
-import branca
-
-from folium.plugins import MousePosition
-
+import numpy as np
 import rasterio
 import rasterio.plot as plot
-from rasterio import warp
-from rasterio import windows
+from folium.plugins import MousePosition
 
 from matplotlib.patches import Rectangle
-
+from rasterio import warp, windows
 
 
 def  plot_raster(path_in,name_in, path_out,name_out, name_product):
@@ -151,5 +132,4 @@ if __name__ == "__main__":
     name_product = 'Sentinel-2'
     
     plot_raster(path_in,name_in, path_out,name_out, name_product)
-
 
