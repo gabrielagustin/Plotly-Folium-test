@@ -56,7 +56,8 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
                 src_transform=transform,
                 dst_transform=transform,resampling=warp.Resampling.bilinear)
         
-    bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)     
+    bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)
+     
     
     # plt.figure(figsize=(10,8))
     # plot.show(out_array,
