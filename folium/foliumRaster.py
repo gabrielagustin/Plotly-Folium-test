@@ -53,7 +53,7 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
 
     warp.reproject(np.transpose(img,axes=(2,0,1)),
                 out_array,src_crs=src.crs,dst_crs={"init":"epsg:4326"},
-                src_transform=transform,
+                src_transform=src.transform,
                 dst_transform=transform,resampling=warp.Resampling.bilinear)
         
     bounds_trans = warp.transform_bounds(src.crs,{'init': 'epsg:4326'},*bbox)
@@ -65,8 +65,8 @@ def  plot_raster(path_in,name_in, path_out,name_out, name_product):
 
     ### define the world map centered around center of tif image
     
-    mean_lat = (bbox[1] + bbox[3]) / 2.0
-    mean_lng = (bbox[0] + bbox[2]) / 2.0
+    mean_lat = (bounds_trans[1] + bounds_trans[3]) / 2.0
+    mean_lng = (bounds_trans[0] + bounds_trans[2]) / 2.0
     
     map_bb = folium.Map(location=[mean_lat,mean_lng],
             zoom_start=8)
